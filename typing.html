@@ -1,0 +1,190 @@
+<html>
+  <head>
+    <style>
+#gamediv{
+  width: 640px;
+  margin: 20px auto;
+}
+#gamecanvas{
+  background-color:#eee;
+}
+    </style>
+  </head>
+  <body>
+    <div id="gamediv">
+      <canvas id="gamecanvas" width="640" height="480"></canvas>
+    </div>
+    <div>fps: <span id="fps"></span></div>
+  </body>
+  <script>
+
+
+function CreateEngine(canvasId){
+  var engine = {};
+  engine.canvas = document.getElementById(canvasId);
+  engine.ctx = engine.canvas.getContext("2d");
+  engine.screenWidth = engine.canvas.width;
+  engine.screenHeight = engine.canvas.height;
+  engine.lastframe = 0;
+  engine.spirits = [];
+  engine.controlKeys = {};
+
+  engine.addSpirit = function (zOdr, spirit) {
+    this.spirits.push({zOrder: zOdr, spirit:spirit});
+    spirit.setCtx(this.ctx);
+    // sort spirits by z-order.
+  };
+
+  engine.findSpirit = function(id){
+    for(i=0; i<this.spirits.length; i++){
+      if(this.spirits[i].id == id) {
+        return this.spirits[i].spirit;
+      }
+    }
+  };
+
+  engine.clearDeadSpirits = function(){
+    for(i=this.spirits.length-1; i>=0; i--){
+      if (this.spirits[i].deleted 
+          || (typeof this.spirits[i].hp !== 'undefined' && this.spirits[i].hp < 0)) {
+        this.spirits.splice(i,1);
+      }
+    }
+  };
+
+  engine.start = function (tframe) {
+    window.requestAnimationFrame(engine.start);
+
+    engine.ctx.clearRect(0, 0, engine.canvas.width, engine.canvas.height);
+
+    engine.spirits.forEach(function(e){
+      // check the spirit if it is out of the screen.
+      if (e.x < -(engine.canvas.width)
+          || e.x > 2 * engine.canvas.width
+          || e.y < -(engine.canvas.height)
+          || e.y > 2 * engine.canvas.height) {
+        e.deleted = true;
+      }
+
+      e.spirit.draw();
+    });
+
+    engine.clearDeadSpirits();
+
+    // debug info
+    document.getElementById('fps').innerText = 1000 / (tframe-engine.lastframe).toString();
+    engine.lastframe = tframe
+  };
+
+  engine.addContorlButton = function (keyCode, callback){
+    engine.controlKeys[keyCode] = callback;
+  }
+
+  var keyControl = function (e) {
+    if(typeof engine.controlKeys[e.keyCode] !== 'undefined'){
+      engine.controlKeys[e.keyCode]();
+    }
+  }
+
+  document.addEventListener("keydown", keyControl, false);
+
+  return engine;
+}
+
+function CreateSpirit(){
+  var that = {};
+  that.id = '';
+  that.deleted = false;
+  that.x = 0;
+  that.y = 0;
+  that.ctx = null;
+  that.setCtx = function(ctx){
+    that.ctx = ctx;
+  };
+  return that;
+}
+
+function CreateBullet(){
+  var that = CreateSpirit();
+  that.speed = 0;
+  that.angle = 0;
+  that.draw = function(){
+    that.ctx.beginPath();
+    that.x = that.x + Math.cos(that.angle) * that.speed;
+    that.y = that.y + Math.sin(that.angle) * that.speed;
+    that.ctx.arc(that.x, that.y, 3, 0, Math.PI * 2);
+    that.ctx.fillStyle = "#dd9500";
+    that.ctx.fill();
+    that.ctx.closePath();
+  };
+  return that;
+}
+
+function CreateEnemy() {
+  var that = CreateSpirit();
+  that.speed = 0;
+  that.angle = 0;
+  that.draw = function(){
+    that.ctx.beginPath();
+    that.x = that.x - Math.cos(that.angle) * that.speed;
+    that.y = that.y - Math.sin(that.angle) * that.speed;
+    that.ctx.rect(that.x, that.y, 10, 20);
+    that.ctx.fillStyle = "#00dd95";
+    that.ctx.fill();
+    that.ctx.closePath();
+  };
+  return that;
+}
+
+var engine = CreateEngine('gamecanvas');
+
+var hq = CreateSpirit();
+hq.x = engine.screenWidth / 2;
+hq.y = engine.screenHeight / 2;
+hq.hp = 100;
+hq.draw = function () {
+  hq.ctx.beginPath();
+  hq.ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
+  hq.ctx.fillStyle = "#0095DD";
+  hq.ctx.fill();
+  hq.ctx.closePath();
+};
+
+hq.fire = function() {
+  var bullet = CreateBullet();
+  bullet.speed = 5;
+  bullet.angle = 1.5;
+  bullet.x = hq.x;
+  bullet.y = hq.y;
+  engine.addSpirit(2, bullet);
+};
+
+engine.addSpirit(1, hq);
+
+engine.addContorlButton(65, function(){
+  hq.fire();
+});
+
+engine.start();
+
+function addEnemy(){
+  var e = CreateEnemy();
+  e.angle = Math.random() * Math.PI * 2;
+
+  var tgt = Math.tgt(e.angle);
+  e.y = tgt * engine.screenWidth / 2;
+  if (e.y > engine.screenHeight){
+    e.y = engine.screenHeight;
+    e.x = engine.screenHeight / 2 / tgt;
+  }
+  if (e.y < 0){
+    e.y = 0;
+    e.x = engine.screenHeight / 2 / tgt;
+  }
+
+}
+
+setInterval(addEnemy, 1500);
+
+  </script>
+</html>
