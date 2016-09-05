@@ -122,17 +122,32 @@ function CreateBullet(){
 
 function CreateEnemy() {
   var that = CreateSpirit();
-  that.speed = 0;
-  that.angle = 0;
+  that.speed = 0.0;
+  that.t = 0;
+  that.destX = 0;
+  that.destY = 0;
+  that.startX = 0;
+  that.startY = 0;
   that.draw = function(){
+
+    var t = that.t;
     that.ctx.beginPath();
-    that.x = that.x - Math.cos(that.angle) * that.speed;
-    that.y = that.y - Math.sin(that.angle) * that.speed;
+    that.x = (1 - t)*(1-t)*that.startX + 2*t*(1-t)*engine.screenWidth/2 + t*t*that.destX;
+    that.y = (1 - t)*(1-t)*that.startY + 2*t*(1-t)*engine.screenHeight/2 + t*t*that.destY;
     that.ctx.rect(that.x - 10, that.y - 10, 20, 20);
     that.ctx.fillStyle = "#00dd95";
     that.ctx.fill();
     that.ctx.closePath();
+
+    that.t += that.speed;
+
+    if(that.t > 1) {
+      that.deleted = true;
+      return;
+    }
+
   };
+
   return that;
 }
 
@@ -170,15 +185,18 @@ engine.start();
 function addEnemy(){
   var e = CreateEnemy();
   e.angle = Math.random() * Math.PI * 2;
-  e.speed = 1;
+  e.speed = 0.003;
 
   var w = engine.screenWidth / 2;
   var h = engine.screenHeight / 2;
 
   var r = Math.sqrt(w * w + h * h);
 
-  e.x = w + r * Math.cos(e.angle);
-  e.y = h + r * Math.sin(e.angle);
+  e.startX = w + r * Math.cos(e.angle);
+  e.startY = h + r * Math.sin(e.angle);
+
+  e.destX = w + r * Math.cos(e.angle + Math.PI * 3 / 4);
+  e.destY = h + r * Math.sin(e.angle + Math.PI * 3 / 4);
 
   engine.addSpirit(1, e);
 }
