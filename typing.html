@@ -176,9 +176,19 @@ hq.fire = function(e) {
   var bullet = CreateBullet();
   bullet.speed = 5;
 
-  var t = e.t + e.speed * 20;
-  var tgtX = (1-t)*(1-t)*e.startX + 2*t*(1-t)*engine.screenWidth/2 + t*t*e.destX;
-  var tgtY = (1-t)*(1-t)*e.startY + 2*t*(1-t)*engine.screenHeight/2 + t*t*e.destY;
+  // compute the target area of the bullet
+  var preframe = 40;
+  var needframe = 0;
+  var tgtX, tgtY;
+
+  while(Math.abs(preframe - needframe) > 3){
+    preframe = Math.abs(preframe + needframe) / 2;
+    var t = e.t + e.speed * preframe;
+    var tgtX = (1-t)*(1-t)*e.startX + 2*t*(1-t)*engine.screenWidth/2 + t*t*e.destX;
+    var tgtY = (1-t)*(1-t)*e.startY + 2*t*(1-t)*engine.screenHeight/2 + t*t*e.destY;
+
+    needframe = Math.sqrt(Math.pow(tgtY - engine.screenHeight / 2, 2) + Math.pow(tgtX - engine.screenWidth / 2, 2)) / bullet.speed;
+  }
 
   bullet.angle = Math.atan((tgtY - engine.screenHeight / 2) / (tgtX - engine.screenWidth / 2));
 
