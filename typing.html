@@ -29,24 +29,24 @@ function CreateEngine(canvasId){
   engine.spirits = [];
   engine.controlKeys = {};
 
-  engine.addSpirit = function (zOdr, spirit) {
-    this.spirits.push({zOrder: zOdr, spirit:spirit});
+  engine.addSpirit = function (spirit) {
+    this.spirits.push(spirit);
     spirit.setCtx(this.ctx);
     // sort spirits by z-order.
   };
 
   engine.findSpirit = function(id){
     for(i=0; i<this.spirits.length; i++){
-      if(this.spirits[i].spirit.id == id) {
-        return this.spirits[i].spirit;
+      if(this.spirits[i].id == id) {
+        return this.spirits[i];
       }
     }
   };
 
   engine.clearDeadSpirits = function(){
     for(i=this.spirits.length-1; i>=0; i--){
-      if (this.spirits[i].spirit.deleted 
-          || (typeof this.spirits[i].spirit.hp !== 'undefined' && this.spirits[i].spirit.hp < 0)) {
+      if (this.spirits[i].deleted 
+          || (typeof this.spirits[i].hp !== 'undefined' && this.spirits[i].hp < 0)) {
         this.spirits.splice(i,1);
       }
     }
@@ -59,14 +59,14 @@ function CreateEngine(canvasId){
 
     engine.spirits.forEach(function(e){
       // check the spirit if it is out of the screen.
-      if (e.spirit.x < -(engine.canvas.width)
-          || e.spirit.x > 2 * engine.canvas.width
-          || e.spirit.y < -(engine.canvas.height)
-          || e.spirit.y > 2 * engine.canvas.height) {
-        e.spirit.deleted = true;
+      if (e.x < -(engine.canvas.width)
+          || e.x > 2 * engine.canvas.width
+          || e.y < -(engine.canvas.height)
+          || e.y > 2 * engine.canvas.height) {
+        e.deleted = true;
       }
 
-      e.spirit.draw();
+      e.draw();
     });
 
     engine.clearDeadSpirits();
@@ -190,10 +190,10 @@ hq.fire = function(e) {
   }
   bullet.x = hq.x;
   bullet.y = hq.y;
-  engine.addSpirit(2, bullet);
+  engine.addSpirit(bullet);
 };
 
-engine.addSpirit(1, hq);
+engine.addSpirit(hq);
 
 engine.addContorlButton(65, function(){
   hq.fire(engine.findSpirit('a'));
@@ -260,7 +260,7 @@ function addEnemy(){
   e.destX = w + r * Math.cos(e.angle + Math.PI * 3 / 4);
   e.destY = h + r * Math.sin(e.angle + Math.PI * 3 / 4);
 
-  engine.addSpirit(1, e);
+  engine.addSpirit(e);
 }
 
 setInterval(addEnemy, 2500);
