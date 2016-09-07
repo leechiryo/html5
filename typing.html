@@ -69,6 +69,8 @@ function CreateEngine(canvasId){
       e.draw();
     });
 
+    detectCollision();
+
     engine.clearDeadSpirits();
 
     // debug info
@@ -78,6 +80,23 @@ function CreateEngine(canvasId){
 
   engine.addContorlButton = function (keyCode, callback){
     engine.controlKeys[keyCode] = callback;
+  }
+
+  var detectCollision = function () {
+    engine.spirits.forEach(function(e) {
+      if(e.id == "bullet"){
+        engine.spirits.forEach(function(el){
+          if(el.id != "hq" && el.id != "bullet") {
+            var dist = Math.pow(el.x - e.x,2) + Math.pow(el.y - e.y, 2);
+            if ( dist > 225) return;
+            else if (dist < 169){
+                    e.deleted = true;
+                    return;
+                    }
+          }
+        });
+      }
+    });
   }
 
   var keyControl = function (e) {
@@ -108,6 +127,7 @@ function CreateBullet(){
   var that = CreateSpirit();
   that.speed = 0;
   that.angle = 0;
+  that.id = "bullet";
   that.draw = function(){
     that.ctx.beginPath();
     that.x = that.x + Math.cos(that.angle) * that.speed;
@@ -162,6 +182,7 @@ var hq = CreateSpirit();
 hq.x = engine.screenWidth / 2;
 hq.y = engine.screenHeight / 2;
 hq.hp = 100;
+hq.id = "hq";
 hq.draw = function () {
   hq.ctx.beginPath();
   hq.ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
