@@ -28,6 +28,7 @@ function CreateEngine(canvasId){
   engine.lastframe = 0;
   engine.spirits = [];
   engine.controlKeys = {};
+  engine.score = 0;
 
   engine.addSpirit = function (spirit) {
     this.spirits.push(spirit);
@@ -46,7 +47,7 @@ function CreateEngine(canvasId){
   engine.clearDeadSpirits = function(){
     for(i=this.spirits.length-1; i>=0; i--){
       if (this.spirits[i].deleted 
-          || (typeof this.spirits[i].hp !== 'undefined' && this.spirits[i].hp < 0)) {
+          || (typeof this.spirits[i].hp !== 'undefined' && this.spirits[i].hp <= 0)) {
         this.spirits.splice(i,1);
       }
     }
@@ -56,6 +57,10 @@ function CreateEngine(canvasId){
     window.requestAnimationFrame(engine.start);
 
     engine.ctx.clearRect(0, 0, engine.canvas.width, engine.canvas.height);
+
+    engine.ctx.font = "32px serif";
+    engine.ctx.fillStyle = "#000";
+    engine.ctx.fillText("SCORE: " + engine.score, 50, 50);
 
     engine.spirits.forEach(function(e){
       // check the spirit if it is out of the screen.
@@ -91,6 +96,8 @@ function CreateEngine(canvasId){
             if ( dist > 225) return;
             else if (dist < 169){
                     e.deleted = true;
+                    el.attackedBy(e);
+                    engine.score += e.attack;
                     return;
                     }
           }
@@ -128,6 +135,7 @@ function CreateBullet(){
   that.speed = 0;
   that.angle = 0;
   that.id = "bullet";
+  that.attack = 10;
   that.draw = function(){
     that.ctx.beginPath();
     that.x = that.x + Math.cos(that.angle) * that.speed;
@@ -148,7 +156,12 @@ function CreateEnemy(id) {
   that.destY = 0;
   that.startX = 0;
   that.startY = 0;
+  that.hp = 30;
   that.id = id;
+  that.attackedBy = function(b){
+    that.hp -= b.attack;
+    if(that.hp < 0) that.hp = 0;
+  };
   that.draw = function(){
 
     var t = that.t;
@@ -162,7 +175,7 @@ function CreateEnemy(id) {
 
     that.ctx.font = "20px serif";
     that.ctx.fillStyle = "#000";
-    that.ctx.fillText(id, that.x - 2, that.y+2);
+    that.ctx.fillText(id, that.x - 5, that.y+6);
 
     that.t += that.speed;
 
@@ -183,7 +196,9 @@ hq.x = engine.screenWidth / 2;
 hq.y = engine.screenHeight / 2;
 hq.hp = 100;
 hq.id = "hq";
+hq.fireWait = 0;
 hq.draw = function () {
+  if(hq.fireWait>0) hq.fireWait--;
   hq.ctx.beginPath();
   hq.ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
   hq.ctx.fillStyle = "#0095DD";
@@ -192,7 +207,13 @@ hq.draw = function () {
 };
 
 hq.fire = function(e) {
-  if(typeof e === 'undefined' || e == null) return;
+  if(hq.fireWait > 0) {
+    return;
+  }
+  if(typeof e === 'undefined' || e == null){
+    hq.fireWait = 60;
+    return;
+  }
 
   var bullet = CreateBullet();
   bullet.speed = 5;
@@ -227,25 +248,25 @@ hq.fire = function(e) {
 engine.addSpirit(hq);
 
 engine.addContorlButton(65, function(){
-  hq.fire(engine.findSpirit('a'));
+  hq.fire(engine.findSpirit('A'));
 });
 
 engine.addContorlButton(83, function(){
-  hq.fire(engine.findSpirit('s'));
+  hq.fire(engine.findSpirit('S'));
 });
 
 engine.addContorlButton(68, function(){
-  hq.fire(engine.findSpirit('d'));
+  hq.fire(engine.findSpirit('D'));
 });
 
 engine.addContorlButton(70, function(){
-  hq.fire(engine.findSpirit('f'));
+  hq.fire(engine.findSpirit('F'));
 });
 
 engine.start();
 
 var getBtn = function(){
-  var btn = ['a','s','d','f'];
+  var btn = ['A','S','D','F'];
   var nin1 = 4;
 
   return function(){
@@ -255,10 +276,10 @@ var getBtn = function(){
     if(nin1 == 1) {
       nin1 = 4;
       retval = btn[0];
-      btn[0] = 'a';
-      btn[1] = 's';
-      btn[2] = 'd';
-      btn[3] = 'f';
+      btn[0] = 'A';
+      btn[1] = 'S';
+      btn[2] = 'D';
+      btn[3] = 'F';
       return retval;
     }
 
