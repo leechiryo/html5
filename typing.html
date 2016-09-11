@@ -9,6 +9,7 @@
   background-color:#eee;
 }
     </style>
+    <script src="animation.js"></script>
   </head>
   <body>
     <div id="gamediv">
@@ -21,6 +22,7 @@
 
 function CreateEngine(canvasId){
   var engine = {};
+
   engine.canvas = document.getElementById(canvasId);
   engine.ctx = engine.canvas.getContext("2d");
   engine.screenWidth = engine.canvas.width;
@@ -158,10 +160,18 @@ function CreateEnemy(id) {
   that.startY = 0;
   that.hp = 30;
   that.id = id;
+
+  that.boom = CreateAnimation(engine.ctx);
+  that.boom.loadSrcPng("Boom.png", 64, 64);
+  that.boom.onFinished(function(){
+    that.hp = 0;
+  });
+
   that.attackedBy = function(b){
     that.hp -= b.attack;
-    if(that.hp < 0) that.hp = 0;
+    if(that.hp < 1) that.hp = 1;
   };
+
   that.draw = function(){
 
     var t = that.t;
@@ -184,6 +194,11 @@ function CreateEnemy(id) {
       return;
     }
 
+    if(that.hp == 1){
+      // show boom animation.
+      that.boom.setPosition(that.x - 33, that.y - 33);
+      that.boom.play();
+    }
   };
 
   return that;
@@ -316,6 +331,7 @@ function addEnemy(){
 }
 
 setInterval(addEnemy, 2500);
+
 
   </script>
 </html>
