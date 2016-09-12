@@ -6,7 +6,7 @@
   margin: 20px auto;
 }
 #gamecanvas{
-  background-color:#eee;
+  background-color:#333;
 }
     </style>
     <script src="animation.js"></script>
@@ -162,10 +162,13 @@ function CreateEnemy(id) {
   that.id = id;
 
   that.boom = CreateAnimation(engine.ctx);
-  that.boom.loadSrcPng("1945.png", 64, 64, [[4, 301], [70, 301], [136, 301], [202, 301], [268, 301], [334, 301], [400, 301]]);
+  that.boom.loadSrcPng("1945.png", 63, 63, [[5, 302], [71, 302], [137, 302], [203, 302], [269, 302], [335, 302], [401, 302]]);
   that.boom.onFinished(function(){
     that.hp = 0;
   });
+
+  that.fly = CreateAnimation(engine.ctx);
+  that.fly.loadSrcPng("1945.png", 63, 63, [[269, 401], [269, 401], [335, 401], [335, 401], [401, 401], [401, 401]]);
 
   that.attackedBy = function(b){
     that.hp -= b.attack;
@@ -176,28 +179,49 @@ function CreateEnemy(id) {
 
     var t = that.t;
     that.ctx.beginPath();
+
+    var lastX = that.x;
+    var lastY = that.y;
     that.x = (1-t)*(1-t)*that.startX + 2*t*(1-t)*engine.screenWidth/2 + t*t*that.destX;
     that.y = (1-t)*(1-t)*that.startY + 2*t*(1-t)*engine.screenHeight/2 + t*t*that.destY;
-    that.ctx.rect(that.x - 10, that.y - 10, 20, 20);
-    that.ctx.fillStyle = "#00dd95";
-    that.ctx.fill();
-    that.ctx.closePath();
 
-    that.ctx.font = "20px serif";
-    that.ctx.fillStyle = "#000";
-    that.ctx.fillText(id, that.x - 5, that.y+6);
+    if(that.hp > 1){
+      if(lastX != 0 || lastY != 0){
+        var angle = Math.atan((that.y - lastY) / (that.x - lastX));
+
+        if (that.y < lastY && that.x < lastX) {
+          angle += Math.PI;
+        } else if (that.y > lastY && that.x < lastX) {
+          angle -= Math.PI;
+        }
+
+        that.ctx.translate(that.x, that.y);
+        that.ctx.rotate(angle + Math.PI / 2);
+        that.ctx.translate(-that.x, -that.y);
+      }
+
+      that.fly.setPosition(that.x - 33, that.y - 33);
+      that.fly.play();
+
+      if(lastX != 0 || lastY != 0){
+        that.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+
+      that.ctx.font = "20px serif";
+      that.ctx.fillStyle = "#000";
+      that.ctx.fillText(id, that.x - 5, that.y+6);
+
+    } else if (that.hp == 1){
+      // show boom animation.
+      that.boom.setPosition(that.x - 33, that.y - 33);
+      that.boom.play();
+    }
 
     that.t += that.speed;
 
     if(that.t > 1) {
       that.deleted = true;
       return;
-    }
-
-    if(that.hp == 1){
-      // show boom animation.
-      that.boom.setPosition(that.x - 33, that.y - 33);
-      that.boom.play();
     }
   };
 

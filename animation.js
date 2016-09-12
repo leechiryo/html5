@@ -69,7 +69,7 @@ function CreateAnimation(ctx){
           _frameWidth, _frameHeight,
           _x, _y, _frameWidth, _frameHeight);
 
-      return playIdx == 0;
+      return playIdx == (_framePositions.length - 1);
     }
   };
 
