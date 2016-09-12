@@ -162,7 +162,7 @@ function CreateEnemy(id) {
   that.id = id;
 
   that.boom = CreateAnimation(engine.ctx);
-  that.boom.loadSrcPng("Boom.png", 64, 64);
+  that.boom.loadSrcPng("1945.png", 64, 64, [[4, 301], [70, 301], [136, 301], [202, 301], [268, 301], [334, 301], [400, 301]]);
   that.boom.onFinished(function(){
     that.hp = 0;
   });

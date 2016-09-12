@@ -5,10 +5,9 @@ function CreateAnimation(ctx){
   var _callback = null;
   var _ctx = ctx;
   var _imgLoaded = false;
-  var _imgRow = 0;
-  var _imgCol = 0;
   var _frameWidth = 0;
   var _frameHeight = 0;
+  var _framePositions = null;
   var _x = 0;
   var _y = 0;
 
@@ -31,7 +30,7 @@ function CreateAnimation(ctx){
       that.drawFrame(_frameIdx);
     },
 
-    loadSrcPng: function(imgPath, frameWidth, frameHeight) {
+    loadSrcPng: function(imgPath, frameWidth, frameHeight, framePositions) {
       if (frameWidth <= 0 || frameHeight <= 0){
         throw "Error frame width or height: must be positive integer.";
       }
@@ -39,15 +38,10 @@ function CreateAnimation(ctx){
       _imgLoaded = false;
       _frameImg.src = imgPath;
       _frameImg.onload = function(){
-        if (_frameImg.width % frameWidth != 0 || _frameImg.height % frameHeight != 0){
-          throw "Error frame image.";
-        } else{
-          _imgCol = _frameImg.width / frameWidth;
-          _imgRow = _frameImg.height / frameHeight;
+          _framePositions = framePositions;
           _frameWidth = frameWidth;
           _frameHeight = frameHeight;
           _imgLoaded = true;
-        }
       };
     },
 
@@ -67,18 +61,15 @@ function CreateAnimation(ctx){
     drawFrame : function(frameIdx){
       if(!_imgLoaded) return true;
 
-      var rowIdx = Math.floor(frameIdx / _imgCol);
-      var colIdx = frameIdx % _imgCol;
-
-      if(rowIdx >= _imgRow) return true;
+      var playIdx = frameIdx % _framePositions.length;
 
       _ctx.drawImage(_frameImg, 
-          colIdx * _frameWidth,
-          rowIdx * _frameHeight,
+          _framePositions[playIdx][0],
+          _framePositions[playIdx][1],
           _frameWidth, _frameHeight,
           _x, _y, _frameWidth, _frameHeight);
 
-      return false;
+      return playIdx == 0;
     }
   };
 
