@@ -170,6 +170,11 @@ function CreateEnemy(id) {
   that.fly = CreateAnimation(engine.ctx);
   that.fly.loadSrcPng("1945.png", 63, 63, [[269, 401], [269, 401], [335, 401], [335, 401], [401, 401], [401, 401]]);
 
+  that.locked = CreateAnimation(engine.ctx);
+  var idx = id.charCodeAt(0) - 'A'.charCodeAt(0);
+  that.locked.loadSrcPng("images/crosses.png", 48, 48, [[0, idx*48]]);
+
+
   that.attackedBy = function(b){
     that.hp -= b.attack;
     if(that.hp < 1) that.hp = 1;
@@ -207,9 +212,8 @@ function CreateEnemy(id) {
         that.ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
 
-      that.ctx.font = "20px serif";
-      that.ctx.fillStyle = "#000";
-      that.ctx.fillText(id, that.x - 5, that.y+6);
+      //that.locked.setPosition(that.x - 24, that.y - 24);
+      //that.locked.play();
 
     } else if (that.hp == 1){
       // show boom animation.
