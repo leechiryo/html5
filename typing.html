@@ -172,7 +172,15 @@ function CreateEnemy(id) {
 
   that.locked = CreateAnimation(engine.ctx);
   var idx = id.charCodeAt(0) - 'A'.charCodeAt(0);
-  that.locked.loadSrcPng("images/crosses.png", 48, 48, [[0, idx*48]]);
+  var coords = [];
+  for(var i = 0; i<30; i++){
+    coords.push([0, idx*48]);
+  }
+  for(var i = 0; i<30; i++){
+    coords.push([48, idx*48]);
+  }
+
+  that.locked.loadSrcPng("images/crosses.png", 48, 48, coords);
 
 
   that.attackedBy = function(b){
@@ -212,8 +220,8 @@ function CreateEnemy(id) {
         that.ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
 
-      //that.locked.setPosition(that.x - 24, that.y - 24);
-      //that.locked.play();
+      that.locked.setPosition(that.x - 24, that.y - 24);
+      that.locked.play();
 
     } else if (that.hp == 1){
       // show boom animation.
