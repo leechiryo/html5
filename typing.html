@@ -173,7 +173,7 @@ function CreateEnemy(id) {
   that.locked = CreateAnimation(engine.ctx);
   var idx = id.charCodeAt(0) - 'A'.charCodeAt(0);
   var coords = [];
-  for(var i = 0; i<30; i++){
+  for(var i = 0; i<5; i++){
     coords.push([0, idx*48]);
   }
   for(var i = 0; i<30; i++){
@@ -248,14 +248,28 @@ hq.y = engine.screenHeight / 2;
 hq.hp = 100;
 hq.id = "hq";
 hq.fireWait = 0;
+hq.image = new Image();
+hq.loaded = false;
+hq.image.onload = function(){
+  hq.loaded = true;
+}
+hq.image.src = "1945.png";
+
+hq.image2 = new Image();
+hq.loaded2 = false;
+hq.image2.onload = function(){
+  hq.loaded2 = true;
+}
+hq.image2.src = "player5.png";
 hq.draw = function () {
   if(hq.fireWait>0) hq.fireWait--;
-  hq.ctx.beginPath();
-  hq.ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
-  hq.ctx.fillStyle = "#0095DD";
-  hq.ctx.fill();
-  hq.ctx.closePath();
+  if(hq.loaded && hq.loaded2){
+    hq.ctx.drawImage(hq.image, 168, 499, 64, 64, hq.x-32, hq.y-32, 64, 64);
+    hq.ctx.drawImage(hq.image2, 5, 5, 40, 40, hq.x-20, hq.y-20, 40, 40);
+  }
 };
+
+hq.angle = Math.PI * 1.5;
 
 hq.fire = function(e) {
   if(hq.fireWait > 0) {
