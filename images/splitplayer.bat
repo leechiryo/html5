@@ -1,0 +1,34 @@
+magick player6.png +repage -crop 43x47+0+0 player_01.png
+magick player6.png +repage -crop 39x47+42+0 player_02.png
+magick player6.png +repage -crop 46x47+80+0 player_03.png
+magick player6.png +repage -crop 51x47+125+0 player_04.png
+magick player6.png +repage -crop 51x47+175+0 player_05.png
+magick player6.png +repage -crop 51x47+225+0 player_06.png
+magick player6.png +repage -crop 56x47+275+0 player_07.png
+magick player6.png +repage -crop 53x47+330+0 player_08.png
+magick player6.png +repage -crop 51x47+382+0 player_09.png
+magick player6.png +repage -crop 54x47+432+0 player_10.png
+magick player6.png +repage -crop 52x47+485+0 player_11.png
+magick player6.png +repage -crop 55x47+536+0 player_12.png
+magick player6.png +repage -crop 51x47+590+0 player_13.png
+magick player6.png +repage -crop 48x47+640+0 player_14.png
+magick player6.png +repage -crop 45x47+687+0 player_15.png
+magick player6.png +repage -crop 47x47+731+0 player_16.png
+
+magick player7.png +repage -crop 45x47+0+0 player_17.png
+magick player7.png +repage -crop 39x47+44+0 player_18.png
+magick player7.png +repage -crop 46x47+84+0 player_19.png
+magick player7.png +repage -crop 49x47+129+0 player_20.png
+magick player7.png +repage -crop 52x47+177+0 player_21.png
+magick player7.png +repage -crop 53x47+228+0 player_22.png
+magick player7.png +repage -crop 54x47+280+0 player_23.png
+magick player7.png +repage -crop 54x47+333+0 player_24.png
+magick player7.png +repage -crop 50x47+386+0 player_25.png
+magick player7.png +repage -crop 54x47+435+0 player_26.png
+magick player7.png +repage -crop 53x47+488+0 player_27.png
+magick player7.png +repage -crop 53x47+540+0 player_28.png
+magick player7.png +repage -crop 52x47+592+0 player_29.png
+magick player7.png +repage -crop 49x47+643+0 player_30.png
+magick player7.png +repage -crop 46x47+691+0 player_31.png
+magick player7.png +repage -crop 52x47+736+0 player_32.png
+
