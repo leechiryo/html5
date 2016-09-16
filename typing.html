@@ -260,12 +260,14 @@ hq.loaded2 = false;
 hq.image2.onload = function(){
   hq.loaded2 = true;
 }
-hq.image2.src = "player5.png";
+hq.image2.src = "images/player.png";
 hq.draw = function () {
   if(hq.fireWait>0) hq.fireWait--;
   if(hq.loaded && hq.loaded2){
+    let imgIdx = Math.round(hq.angle / Math.PI / 2 * 32);
+    if (imgIdx >= 32) imgIdx = 0;
     hq.ctx.drawImage(hq.image, 168, 499, 64, 64, hq.x-32, hq.y-32, 64, 64);
-    hq.ctx.drawImage(hq.image2, 5, 5, 40, 40, hq.x-20, hq.y-20, 40, 40);
+    hq.ctx.drawImage(hq.image2, 72*imgIdx, 0, 64, 64, hq.x-36, hq.y-32, 64, 64);
   }
 };
 
@@ -307,6 +309,7 @@ hq.fire = function(e) {
   }
   bullet.x = hq.x;
   bullet.y = hq.y;
+  hq.angle = bullet.angle < 0 ? bullet.angle + Math.PI * 2 : bullet.angle;
   engine.addSpirit(bullet);
 };
 
