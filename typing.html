@@ -273,6 +273,16 @@ hq.draw = function () {
 
 hq.angle = Math.PI * 1.5;
 
+  hq.fireAni = CreateAnimation(engine.ctx);
+  let fireFrames = [[0,0]];
+  for (let i=1; i<20; i++){
+    fireFrames.push([i*33, 0]);
+  }
+  hq.fireAni.loadSrcPng("images/fire.png", 32, 32, fireFrames);
+  hq.fireAni.onFinished(function(){
+    that.hp = 0;
+  });
+
 hq.fire = function(e) {
   if(hq.fireWait > 0) {
     return;
